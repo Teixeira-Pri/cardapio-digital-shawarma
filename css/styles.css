@@ -158,9 +158,17 @@
       border-radius: 30px;
       transition: background 0.2s, color 0.2s;
       letter-spacing: 0.3px;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    .nav-categorias a:focus:not(:focus-visible):not(.ativo) {
+      background: none;
+      color: rgba(247,239,227,0.7);
     }
 
     .nav-categorias a:hover,
+    .nav-categorias a:focus-visible,
     .nav-categorias a.ativo {
       background: var(--dourado);
       color: #1a1010;

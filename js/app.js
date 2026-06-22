@@ -82,4 +82,12 @@ renderizarCardapio();
   });
 
   sections.forEach(sec => observer.observe(sec));
+
+  // Evita que o link clicado fique "preso" com o estilo de foco/toque do
+  // navegador depois do salto — apenas o scroll-spy (.ativo) deve controlar a cor
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      setTimeout(() => link.blur(), 300);
+    });
+  });
 })();
