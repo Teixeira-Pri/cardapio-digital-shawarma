@@ -46,48 +46,103 @@ function renderizarCardapio() {
 
 renderizarCardapio();
 
-// Marca o link do menu ativo conforme a seção visível e o mantém
-// sempre à vista dentro do menu de categorias (que rola na horizontal)
+// ============================================================
+// NAVEGAÇÃO POR CATEGORIA — fonte única de verdade: activeCategory
+// ------------------------------------------------------------
+// Tanto o clique numa aba quanto o scroll da página só fazem uma
+// coisa: chamar setActiveCategory(id). É essa função, sozinha, que
+// decide qual aba recebe a classe "ativo". Não existe nenhum outro
+// estado (ex.: "clicado") aplicando estilo em paralelo.
+// ============================================================
 (function () {
   const nav = document.querySelector('.nav-categorias');
-  const links = document.querySelectorAll('.nav-categorias a');
-  const sections = document.querySelectorAll('.categoria');
+  const links = Array.from(document.querySelectorAll('.nav-categorias a'));
+  const sections = Array.from(document.querySelectorAll('.categoria'));
   const linkPorId = {};
   links.forEach(link => { linkPorId[link.getAttribute('href').slice(1)] = link; });
 
-  let atual = '';
+  let activeCategory = null;
+  // Enquanto o scroll suave disparado por um clique está em andamento,
+  // o observer não pode sobrescrever a aba ativa.
+  let isClickScrolling = false;
+  let clickScrollTimeout = null;
+  // Ids das seções atualmente dentro da faixa "visível" (logo abaixo do menu sticky)
+  const secoesVisiveis = new Set();
 
-  function marcarAtivo(id) {
-    if (id === atual) return;
-    atual = id;
+  function setActiveCategory(id, { centralizarAba = false } = {}) {
+    if (!id || id === activeCategory) return;
+    activeCategory = id;
+
     links.forEach(link => {
-      link.classList.toggle('ativo', link === linkPorId[id]);
+      const linkId = link.getAttribute('href').slice(1);
+      link.classList.toggle('ativo', linkId === activeCategory);
     });
-    const linkAtivo = linkPorId[id];
-    if (linkAtivo) {
-      linkAtivo.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+    if (centralizarAba) {
+      const linkAtivo = linkPorId[activeCategory];
+      if (linkAtivo) {
+        linkAtivo.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     }
+  }
+
+  // Entre as seções atualmente visíveis, a primeira na ordem do documento
+  // é considerada "a seção atual" (comportamento clássico de scrollspy).
+  function recalcularSecaoVisivel() {
+    if (isClickScrolling) return;
+    const secaoAtual = sections.find(sec => secoesVisiveis.has(sec.id));
+    if (secaoAtual) setActiveCategory(secaoAtual.id, { centralizarAba: true });
   }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        marcarAtivo(entry.target.id);
+        secoesVisiveis.add(entry.target.id);
+      } else {
+        secoesVisiveis.delete(entry.target.id);
       }
     });
+    recalcularSecaoVisivel();
   }, {
-    // Considera "ativa" a seção que está cruzando a faixa logo abaixo do menu sticky
+    // Considera "visível" a seção que está cruzando a faixa logo abaixo do menu sticky
     rootMargin: `-${nav.offsetHeight}px 0px -70% 0px`,
     threshold: 0,
   });
 
   sections.forEach(sec => observer.observe(sec));
 
-  // Evita que o link clicado fique "preso" com o estilo de foco/toque do
-  // navegador depois do salto — apenas o scroll-spy (.ativo) deve controlar a cor
+  function liberarDeteccaoPorScroll() {
+    clearTimeout(clickScrollTimeout);
+    isClickScrolling = false;
+    recalcularSecaoVisivel();
+  }
+
   links.forEach(link => {
-    link.addEventListener('click', () => {
-      setTimeout(() => link.blur(), 300);
+    link.addEventListener('click', (event) => {
+      const id = link.getAttribute('href').slice(1);
+      const destino = document.getElementById(id);
+      if (!destino) return;
+
+      event.preventDefault();
+      link.blur();
+
+      // 1) A aba clicada já é a ativa — sem esperar o scroll terminar.
+      isClickScrolling = true;
+      setActiveCategory(id);
+
+      // 2) Scroll suave até a seção, compensando a altura do menu sticky.
+      const destinoY = window.scrollY + destino.getBoundingClientRect().top - nav.offsetHeight;
+      window.scrollTo({ top: destinoY, behavior: 'smooth' });
+
+      // 3) Só depois que o scroll automático terminar o observer volta a
+      // decidir a aba ativa a partir da seção realmente visível.
+      clearTimeout(clickScrollTimeout);
+      if ('onscrollend' in window) {
+        window.addEventListener('scrollend', liberarDeteccaoPorScroll, { once: true });
+        clickScrollTimeout = setTimeout(liberarDeteccaoPorScroll, 1500); // rede de segurança
+      } else {
+        clickScrollTimeout = setTimeout(liberarDeteccaoPorScroll, 700);
+      }
     });
   });
 })();

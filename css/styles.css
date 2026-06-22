@@ -162,13 +162,20 @@
       outline: none;
     }
 
-    .nav-categorias a:focus:not(:focus-visible):not(.ativo) {
-      background: none;
-      color: rgba(247,239,227,0.7);
+    /* Único estado "ativo": controlado exclusivamente pela classe .ativo,
+       que por sua vez só é aplicada via JS quando activeCategory === categoria.id.
+       Hover e foco por teclado têm aparência própria, propositalmente diferente
+       do estado ativo, para nunca serem confundidos com ele. */
+    .nav-categorias a:hover {
+      background: rgba(212,168,58,0.16);
+      color: var(--dourado-claro);
     }
 
-    .nav-categorias a:hover,
-    .nav-categorias a:focus-visible,
+    .nav-categorias a:focus-visible {
+      outline: 2px solid var(--dourado);
+      outline-offset: 1px;
+    }
+
     .nav-categorias a.ativo {
       background: var(--dourado);
       color: #1a1010;
