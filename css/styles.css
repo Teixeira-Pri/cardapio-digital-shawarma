@@ -1,0 +1,425 @@
+    /* ============================================================
+       VARIÁVEIS E RESET
+    ============================================================ */
+    :root {
+      --vermelho:       #b81c1c;
+      --vermelho-escuro:#8f1010;
+      --dourado:        #d4a83a;
+      --dourado-claro:  #e8c96a;
+      --fundo:          #161110;       /* fundo escuro principal */
+      --fundo-card:     #221a18;       /* fundo dos cards */
+      --fundo-foto:     #2b2120;       /* área de foto/placeholder */
+      --borda-sutil:    rgba(255,255,255,0.07);
+      --claro:          #f7efe3;       /* texto principal sobre fundo escuro */
+      --cinza:          #b9a99c;       /* texto secundário sobre fundo escuro */
+      --cinza-claro:    #8a7a6e;
+      --branco:         #ffffff;
+
+      --sombra:      0 4px 20px rgba(0,0,0,0.35);
+      --sombra-card: 0 4px 14px rgba(0,0,0,0.28);
+      --radius:      14px;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Nunito', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--fundo);
+      color: var(--claro);
+      min-height: 100vh;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; border: none; }
+
+    /* ============================================================
+       HEADER (bem compacto)
+    ============================================================ */
+    .header {
+      background: linear-gradient(135deg, var(--vermelho-escuro) 0%, var(--vermelho) 100%);
+      color: var(--branco);
+      padding: 10px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 20px,
+          rgba(255,255,255,0.04) 20px,
+          rgba(255,255,255,0.04) 21px
+        );
+      pointer-events: none;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-logo {
+      width: clamp(46px, 10vw, 56px);
+      height: clamp(46px, 10vw, 56px);
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid var(--dourado);
+      flex-shrink: 0;
+      background: var(--branco);
+    }
+
+    .header-textos {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .header-textos h1 {
+      font-family: var(--font-display);
+      font-size: clamp(15.5px, 4vw, 19px);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .header-tagline {
+      font-size: 10.5px;
+      opacity: 0.85;
+      margin-top: 1px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 6px;
+      font-size: 10.5px;
+      opacity: 0.8;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-info span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ============================================================
+       MENU DE CATEGORIAS (sticky)
+    ============================================================ */
+    .nav-categorias {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #0f0c0b;
+      padding: 0 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+      border-bottom: 1px solid var(--borda-sutil);
+    }
+
+    .nav-categorias::-webkit-scrollbar { display: none; }
+
+    .nav-categorias ul {
+      display: flex;
+      list-style: none;
+      gap: 6px;
+      padding: 9px 6px;
+      white-space: nowrap;
+      width: max-content;
+      margin: 0 auto;
+    }
+
+    .nav-categorias a {
+      display: block;
+      color: rgba(247,239,227,0.7);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 15px;
+      border-radius: 30px;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-categorias a:hover,
+    .nav-categorias a.ativo {
+      background: var(--dourado);
+      color: #1a1010;
+    }
+
+    /* ============================================================
+       MAIN CONTENT
+    ============================================================ */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 22px 16px 50px;
+    }
+
+    /* ============================================================
+       SEÇÃO DE CATEGORIA
+    ============================================================ */
+    .categoria {
+      margin-bottom: 34px;
+      padding-top: 4px;
+    }
+
+    .categoria-titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .categoria-titulo h2 {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 4.6vw, 23px);
+      font-weight: 700;
+      color: var(--dourado-claro);
+      white-space: nowrap;
+    }
+
+    .categoria-titulo .icone {
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    .categoria-titulo::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--dourado), transparent);
+      border-radius: 2px;
+    }
+
+    .categoria-titulo::before {
+      content: '◆';
+      order: 99;
+      font-size: 7px;
+      color: var(--dourado);
+      margin-left: -2px;
+    }
+
+    .categoria-obs {
+      font-size: 12px;
+      color: var(--cinza);
+      font-style: italic;
+      margin-bottom: 12px;
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       CARDS DE PRODUTO (com foto/placeholder)
+    ============================================================ */
+    /* Mobile-first: 1 coluna por padrão, foto em destaque */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 620px) {
+      .grid-cards { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+
+    @media (min-width: 900px) {
+      .grid-cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    }
+
+    @media (min-width: 1200px) {
+      .grid-cards { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .card {
+      background: var(--fundo-card);
+      border-radius: var(--radius);
+      box-shadow: var(--sombra-card);
+      border: 1px solid var(--borda-sutil);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.4);
+      border-color: var(--dourado);
+    }
+
+    /* ---- Área de foto / placeholder (em destaque no topo do card) ----
+       Proporção fixa por categoria, igual à proporção real das fotos
+       (4:5 nas fotos de pratos/burgers/porções), assim a imagem ocupa
+       o card por completo, sem cortar e sem deixar sobras. As fotos de
+       Shawarmas são quadradas, por isso usam 1:1. */
+    .card-foto {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          transparent,
+          transparent 8px,
+          rgba(255,255,255,0.015) 8px,
+          rgba(255,255,255,0.015) 9px
+        ),
+        radial-gradient(circle at 25% 30%, rgba(212,168,58,0.10), transparent 60%),
+        linear-gradient(150deg, var(--fundo-foto) 0%, #1c1513 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--borda-sutil);
+      overflow: hidden;
+    }
+
+    .card-foto--img .foto-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      position: absolute;
+      inset: 0;
+      transition: transform 0.25s ease;
+    }
+
+    /* Fotos de Shawarmas (e seu combo) são quadradas na origem */
+    #shawarmas .card-foto,
+    #combo-shawarma .card-foto {
+      aspect-ratio: 1 / 1;
+    }
+
+    .card:hover .card-foto .foto-img {
+      transform: scale(1.04);
+    }
+
+    .foto-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.4;
+    }
+
+    .foto-placeholder .icone-foto {
+      font-size: clamp(26px, 6vw, 34px);
+      filter: grayscale(0.4);
+      line-height: 1;
+    }
+
+    .foto-placeholder .label-foto {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--cinza-claro);
+    }
+
+    /* ---- Corpo do card ---- */
+    .card-body {
+      padding: 9px 10px 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .card-nome {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--claro);
+      line-height: 1.25;
+    }
+
+    .card-desc {
+      font-size: 11.5px;
+      color: rgba(247,239,227,0.62);
+      line-height: 1.45;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      overflow: hidden;
+    }
+
+    .card-preco {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--dourado-claro);
+      letter-spacing: -0.2px;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid var(--borda-sutil);
+    }
+
+    /* ============================================================
+       RODAPÉ (discreto e compacto)
+    ============================================================ */
+    footer {
+      background: #0f0c0b;
+      color: var(--branco);
+      padding: 18px 20px 14px;
+      text-align: center;
+      border-top: 1px solid var(--borda-sutil);
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--cinza);
+    }
+
+    .footer-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .footer-info a {
+      color: rgba(255,255,255,0.55);
+      font-weight: 600;
+    }
+
+    .footer-info a.instagram {
+      color: rgba(255,255,255,0.55);
+    }
+
+    .footer-copy {
+      font-size: 10px;
+      color: rgba(255,255,255,0.25);
+      margin-top: 10px;
+    }
+
+    .entrega-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+    }

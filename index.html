@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shawarma Beirut Halal — Cardápio</title>
+  <meta name="description" content="Cardápio digital do Shawarma Beirut Halal — Shawarmas, burgers, pratos, porções, esfihas e bebidas. Av. Conceição, 2074 - Vila Paiva." />
+
+  <!-- Google Fonts: Playfair Display (display) + Nunito (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="header">
+    <div class="header-top">
+      <img
+        src="imagens/logo.jpg"
+        alt="Shawarma Beirut Halal — Logo"
+        class="header-logo"
+      />
+      <div class="header-textos">
+        <h1>Shawarma Beirut Halal</h1>
+        <p class="header-tagline">Sabores autênticos do Líbano, halal e feitos na hora</p>
+      </div>
+    </div>
+
+    <div class="header-info">
+      <span>🛵 Entregamos com taxa</span>
+      <span>📍 Av. Conceição, 2074</span>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MENU DE CATEGORIAS (sticky)
+  ============================================================ -->
+  <nav class="nav-categorias" aria-label="Categorias do cardápio">
+    <ul>
+      <li><a href="#shawarmas">🥙 Shawarmas</a></li>
+      <li><a href="#combo-shawarma">🥙 Combo Shawarma</a></li>
+      <li><a href="#burgers">🍔 Burgers</a></li>
+      <li><a href="#combo-burger">🍔 Combo Burger</a></li>
+      <li><a href="#pratos">🍛 Pratos</a></li>
+      <li><a href="#porcoes">🍟 Porções</a></li>
+      <li><a href="#esfihas">🫓 Esfihas</a></li>
+      <li><a href="#bebidas">🥤 Bebidas</a></li>
+      <li><a href="#adicionais">➕ Adicionais</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================================
+       CONTEÚDO PRINCIPAL — gerado a partir do array "cardapio" no JS
+  ============================================================ -->
+  <main id="cardapio-main"></main>
+
+  <!-- ============================================================
+       RODAPÉ
+  ============================================================ -->
+  <footer>
+    <div class="footer-logo">🌙 Shawarma Beirut Halal</div>
+
+    <div class="footer-info">
+      <span>📍 Av. Conceição, 2074 — Vila Paiva — 02072-002</span>
+      <div class="entrega-badge">🛵 Entregamos com taxa</div>
+      <span>
+        <a href="https://wa.me/5511987987230" target="_blank" rel="noopener">📲 (11) 98798-7230</a>
+      </span>
+      <span>
+        <a href="https://instagram.com/_shawarmabeirut_" target="_blank" rel="noopener" class="instagram">📸 @_shawarmabeirut_</a>
+      </span>
+    </div>
+
+    <div class="footer-divider"></div>
+    <p class="footer-copy">© 2026 Shawarma Beirut Halal — Todos os direitos reservados</p>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+       -----------------------------------------------------------
+       PARA EDITAR PRODUTOS: basta alterar o array "cardapio" abaixo
+       (nome, preco, desc). O HTML é gerado automaticamente.
+  ============================================================ -->
+  <script src="js/produtos.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
