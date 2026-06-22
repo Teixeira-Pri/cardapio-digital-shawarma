@@ -117,9 +117,34 @@ renderizarCardapio();
   sections.forEach(sec => observer.observe(sec));
 
   function liberarDeteccaoPorScroll() {
+    if (!isClickScrolling) return; // idempotente: pode ser chamada mais de uma vez
     clearTimeout(clickScrollTimeout);
     isClickScrolling = false;
     recalcularSecaoVisivel();
+  }
+
+  // Detecta o fim do scroll suave observando a posição via requestAnimationFrame,
+  // em vez de depender do evento "scrollend" (suporte inconsistente em
+  // navegadores mobile). Some frames sem mudança de posição = scroll parou.
+  function aguardarFimDoScroll(callback) {
+    let ultimaPosicao = window.scrollY;
+    let framesParado = 0;
+    function checar() {
+      if (!isClickScrolling) return; // já foi liberado por outra via
+      const posicaoAtual = window.scrollY;
+      if (posicaoAtual === ultimaPosicao) {
+        framesParado++;
+      } else {
+        framesParado = 0;
+        ultimaPosicao = posicaoAtual;
+      }
+      if (framesParado >= 4) {
+        callback();
+        return;
+      }
+      requestAnimationFrame(checar);
+    }
+    requestAnimationFrame(checar);
   }
 
   links.forEach(link => {
@@ -129,7 +154,6 @@ renderizarCardapio();
       if (!destino) return;
 
       event.preventDefault();
-      link.blur();
 
       // 1) A aba clicada já é a ativa — sem esperar o scroll terminar.
       isClickScrolling = true;
@@ -139,15 +163,18 @@ renderizarCardapio();
       const destinoY = window.scrollY + destino.getBoundingClientRect().top - nav.offsetHeight;
       window.scrollTo({ top: destinoY, behavior: 'smooth' });
 
-      // 3) Só depois que o scroll automático terminar o observer volta a
-      // decidir a aba ativa a partir da seção realmente visível.
+      // 3) Só agora, depois de já ter atualizado o estado e iniciado o
+      // scroll, removemos o foco do link — assim nenhum navegador pode
+      // aplicar um estilo de foco residual sobre a aba clicada.
+      link.blur();
+
+      // 4) Enquanto o scroll automático não termina, o observer fica
+      // bloqueado (isClickScrolling). Duas redes de segurança garantem
+      // que ele seja sempre liberado: detecção de posição parada e um
+      // timeout máximo absoluto.
       clearTimeout(clickScrollTimeout);
-      if ('onscrollend' in window) {
-        window.addEventListener('scrollend', liberarDeteccaoPorScroll, { once: true });
-        clickScrollTimeout = setTimeout(liberarDeteccaoPorScroll, 1500); // rede de segurança
-      } else {
-        clickScrollTimeout = setTimeout(liberarDeteccaoPorScroll, 700);
-      }
+      clickScrollTimeout = setTimeout(liberarDeteccaoPorScroll, 2000);
+      aguardarFimDoScroll(liberarDeteccaoPorScroll);
     });
   });
 })();

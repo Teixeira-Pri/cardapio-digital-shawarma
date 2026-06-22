@@ -156,33 +156,56 @@
       font-weight: 700;
       padding: 7px 15px;
       border-radius: 30px;
-      transition: background 0.2s, color 0.2s;
+      /* Sem transição de "background": a troca de aba ativa é instantânea,
+         então nunca existe um frame intermediário com duas abas
+         parcialmente douradas ao mesmo tempo. */
+      transition: color 0.2s;
       letter-spacing: 0.3px;
       -webkit-tap-highlight-color: transparent;
       outline: none;
+      box-shadow: none;
     }
 
-    /* Única condição permitida para aparência de aba ativa: a classe .ativo,
-       aplicada exclusivamente via JS quando activeCategory === categoria.id.
-       :hover só existe em dispositivos com hover real (mouse) — em touchscreens
-       o navegador pode manter :hover "preso" após o toque, criando uma
-       segunda aparência de "selecionado" sem relação com activeCategory.
-       :focus-visible (teclado) usa só contorno, nunca o fundo da aba ativa. */
+    /* ------------------------------------------------------------
+       Único seletor com permissão para aplicar a aparência de "aba
+       ativa" (fundo dourado + texto escuro): .nav-categorias a.ativo
+       — e essa classe só existe no DOM quando activeCategory ===
+       categoria.id (ver js/app.js). Nenhum outro seletor abaixo pode
+       reproduzir esse mesmo visual (fundo dourado sólido), para que
+       :hover, :focus, :focus-visible e :active nunca sejam
+       confundidos com a aba ativa.
+    ------------------------------------------------------------ */
     @media (hover: hover) and (pointer: fine) {
+      /* :hover só existe em dispositivos com hover real (mouse).
+         Em touchscreens o navegador pode manter :hover "preso" após o
+         toque — por isso ele nunca é aplicado em telas sensíveis ao
+         toque, onde só activeCategory pode definir a aparência. */
       .nav-categorias a:hover {
         background: rgba(212,168,58,0.16);
         color: var(--dourado-claro);
       }
     }
 
+    /* :active (estado de pressionar) e :focus simples nunca recebem
+       estilo — sem isso, navegadores não aplicam nenhuma aparência de
+       "selecionado" ao tocar/clicar numa aba. */
+    .nav-categorias a:active,
+    .nav-categorias a:focus {
+      background: transparent;
+    }
+
+    /* Foco por teclado: contorno discreto e neutro (não dourado), para
+       nunca ser confundido visualmente com a aba ativa. */
     .nav-categorias a:focus-visible {
-      outline: 2px solid var(--dourado);
-      outline-offset: 1px;
+      outline: 2px solid rgba(247,239,227,0.55);
+      outline-offset: 2px;
+      background: transparent;
     }
 
     .nav-categorias a.ativo {
       background: var(--dourado);
       color: #1a1010;
+      box-shadow: none;
     }
 
     /* ============================================================
