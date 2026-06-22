@@ -66,8 +66,6 @@ renderizarCardapio();
   // o observer não pode sobrescrever a aba ativa.
   let isClickScrolling = false;
   let clickScrollTimeout = null;
-  // Ids das seções atualmente dentro da faixa "visível" (logo abaixo do menu sticky)
-  const secoesVisiveis = new Set();
 
   function setActiveCategory(id, { centralizarAba = false } = {}) {
     if (!id || id === activeCategory) return;
@@ -86,25 +84,32 @@ renderizarCardapio();
     }
   }
 
-  // Entre as seções atualmente visíveis, a primeira na ordem do documento
-  // é considerada "a seção atual" (comportamento clássico de scrollspy).
-  function recalcularSecaoVisivel() {
-    if (isClickScrolling) return;
-    const secaoAtual = sections.find(sec => secoesVisiveis.has(sec.id));
-    if (secaoAtual) setActiveCategory(secaoAtual.id, { centralizarAba: true });
+  // Calcula, na hora, qual seção está "atual": a última (em ordem de
+  // documento) cujo topo já passou por baixo do menu sticky. Não depende
+  // de nenhum estado intermediário (sem Set/lista acumulando entradas e
+  // saídas) — é sempre recalculado do zero a partir da posição real na
+  // tela, então nunca pode ficar dessincronizado.
+  function obterSecaoAtual() {
+    let atual = null;
+    for (const sec of sections) {
+      if (sec.getBoundingClientRect().top - nav.offsetHeight <= 1) {
+        atual = sec.id;
+      }
+    }
+    return atual;
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        secoesVisiveis.add(entry.target.id);
-      } else {
-        secoesVisiveis.delete(entry.target.id);
-      }
-    });
+  function recalcularSecaoVisivel() {
+    if (isClickScrolling) return;
+    const id = obterSecaoAtual();
+    if (id) setActiveCategory(id, { centralizarAba: true });
+  }
+
+  const observer = new IntersectionObserver(() => {
+    // O IntersectionObserver só serve de "gatilho" eficiente para saber
+    // quando recalcular — a decisão em si vem sempre de obterSecaoAtual().
     recalcularSecaoVisivel();
   }, {
-    // Considera "visível" a seção que está cruzando a faixa logo abaixo do menu sticky
     rootMargin: `-${nav.offsetHeight}px 0px -70% 0px`,
     threshold: 0,
   });

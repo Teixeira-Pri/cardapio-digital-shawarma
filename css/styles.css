@@ -162,13 +162,17 @@
       outline: none;
     }
 
-    /* Único estado "ativo": controlado exclusivamente pela classe .ativo,
-       que por sua vez só é aplicada via JS quando activeCategory === categoria.id.
-       Hover e foco por teclado têm aparência própria, propositalmente diferente
-       do estado ativo, para nunca serem confundidos com ele. */
-    .nav-categorias a:hover {
-      background: rgba(212,168,58,0.16);
-      color: var(--dourado-claro);
+    /* Única condição permitida para aparência de aba ativa: a classe .ativo,
+       aplicada exclusivamente via JS quando activeCategory === categoria.id.
+       :hover só existe em dispositivos com hover real (mouse) — em touchscreens
+       o navegador pode manter :hover "preso" após o toque, criando uma
+       segunda aparência de "selecionado" sem relação com activeCategory.
+       :focus-visible (teclado) usa só contorno, nunca o fundo da aba ativa. */
+    @media (hover: hover) and (pointer: fine) {
+      .nav-categorias a:hover {
+        background: rgba(212,168,58,0.16);
+        color: var(--dourado-claro);
+      }
     }
 
     .nav-categorias a:focus-visible {
