@@ -81,12 +81,65 @@
   </footer>
 
   <!-- ============================================================
+       BOTÃO FLUTUANTE DO CARRINHO
+  ============================================================ -->
+  <button id="botao-carrinho" class="botao-carrinho-flutuante" aria-label="Abrir carrinho">
+    🛒
+    <span class="badge-carrinho" id="badge-carrinho">0</span>
+  </button>
+
+  <!-- ============================================================
+       DRAWER DO CARRINHO
+  ============================================================ -->
+  <div class="overlay-carrinho" id="overlay-carrinho"></div>
+  <aside class="drawer-carrinho" id="drawer-carrinho" aria-hidden="true">
+    <div class="drawer-header">
+      <h2>🛒 Meu Carrinho</h2>
+      <button class="botao-fechar" id="fechar-carrinho" aria-label="Fechar carrinho">✕</button>
+    </div>
+    <div class="drawer-itens" id="drawer-itens"></div>
+    <div class="drawer-footer">
+      <div class="drawer-total">
+        <span>Total</span>
+        <span id="total-carrinho">R$ 0,00</span>
+      </div>
+      <button class="botao-finalizar" id="botao-finalizar">📲 Finalizar via WhatsApp</button>
+      <button class="link-continuar" id="continuar-escolhendo">← Continuar escolhendo</button>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       FORMULÁRIO DE FINALIZAÇÃO DE PEDIDO
+  ============================================================ -->
+  <div class="overlay-formulario" id="overlay-formulario"></div>
+  <div class="modal-formulario" id="modal-formulario" aria-hidden="true">
+    <div class="modal-header">
+      <h2>📋 Finalizar pedido</h2>
+      <button class="botao-fechar" id="fechar-formulario" aria-label="Fechar formulário">✕</button>
+    </div>
+    <p class="modal-subtitulo">Preencha seus dados e envie o pedido pelo WhatsApp</p>
+    <form id="form-pedido">
+      <label>Nome completo *
+        <input type="text" id="campo-nome" required placeholder="Seu nome" pattern="[^0-9]*" title="Digite apenas letras">
+      </label>
+      <label>Celular (opcional)
+        <input type="tel" id="campo-telefone" placeholder="(11) 9XXXX-XXXX" inputmode="numeric" pattern="[0-9]*" title="Digite apenas números">
+      </label>
+      <label>Número da mesa *
+        <input type="text" id="campo-mesa" required placeholder="Ex: 5" inputmode="numeric" pattern="[0-9]*" title="Digite apenas números">
+      </label>
+      <button type="submit" class="botao-finalizar">📲 Enviar via WhatsApp</button>
+    </form>
+  </div>
+
+  <!-- ============================================================
        JAVASCRIPT
        -----------------------------------------------------------
        PARA EDITAR PRODUTOS: basta alterar o array "cardapio" abaixo
        (nome, preco, desc). O HTML é gerado automaticamente.
   ============================================================ -->
   <script src="js/produtos.js"></script>
+  <script src="js/carrinho.js"></script>
   <script src="js/app.js"></script>
 
 </body>

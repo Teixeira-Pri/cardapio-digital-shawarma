@@ -4,6 +4,9 @@
     :root {
       --vermelho:       #b81c1c;
       --vermelho-escuro:#8f1010;
+      --vinho:          #5c1018;       /* vinho — cor preferida do cliente para o carrinho/CTA */
+      --vinho-claro:    #7a1d24;
+      --vinho-escuro:   #3d0a10;
       --dourado:        #d4a83a;
       --dourado-claro:  #e8c96a;
       --fundo:          #161110;       /* fundo escuro principal */
@@ -465,3 +468,537 @@
       padding: 3px 10px;
       font-size: 11px;
     }
+
+    /* ============================================================
+       BANNER DE CATEGORIA (Shawarmas, Burgers, Pratos, Esfihas)
+       ------------------------------------------------------------
+       Uma única foto funciona como capa/banner da seção — não como
+       a foto de um item específico. As variações ficam listadas
+       abaixo, sem foto individual por item.
+       ------------------------------------------------------------
+       Composição dividida (texto + imagem lado a lado) em vez de uma
+       foto centralizada solta num espaço largo: isso dá leitura
+       horizontal real e aproveita as laterais. A foto fica em
+       object-fit:contain dentro da sua própria área — nunca cortada —
+       e qualquer sobra de espaço é só o fundo da marca continuando,
+       não um vazio estranho. Pensado para a largura de celular/tablet.
+    ============================================================ */
+    .banner-categoria {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+      height: 150px;
+      margin: 0 0 18px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--borda-sutil);
+      box-shadow: var(--sombra-card);
+      background: linear-gradient(120deg, var(--vinho-escuro) 0%, var(--vinho) 100%);
+    }
+
+    .banner-categoria-texto {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: 12px 4px 12px 16px;
+    }
+
+    .banner-categoria-legenda {
+      color: var(--branco);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Largura presa à proporção 1:1 (a maioria das fotos do cardápio é
+       quadrada) em vez de esticar com o flex — assim a foto nunca fica
+       "perdida" num espaço largo vazio; quem cresce é o painel de texto. */
+    .banner-categoria-img-wrap {
+      flex-shrink: 0;
+      aspect-ratio: 1 / 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+    }
+
+    .banner-categoria-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.45));
+    }
+
+    @media (min-width: 380px) {
+      .banner-categoria-legenda { font-size: 15.5px; }
+    }
+
+    @media (min-width: 480px) {
+      .banner-categoria { height: 190px; }
+      .banner-categoria-legenda { font-size: 17px; }
+    }
+
+    @media (min-width: 700px) {
+      .banner-categoria { height: 220px; }
+    }
+
+    .lista-itens {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-linha {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 4px;
+      border-bottom: 1px solid var(--borda-sutil);
+    }
+
+    .item-linha:last-child { border-bottom: none; }
+
+    .item-linha-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-linha-nome {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--claro);
+    }
+
+    .item-linha-desc {
+      font-size: 12px;
+      color: rgba(247,239,227,0.62);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .item-linha-preco {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--dourado-claro);
+      margin-top: 4px;
+    }
+
+    .item-linha .item-acoes {
+      width: 116px;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 480px) {
+      .item-linha { padding: 16px 6px; }
+      .item-linha-nome { font-size: 15px; }
+    }
+
+    /* ============================================================
+       AÇÕES DO ITEM: estado inicial "Adicionar" ou seletor "− qtd +"
+       ------------------------------------------------------------
+       Os dois estados são mutuamente exclusivos e derivados sempre
+       da quantidade real no carrinho (ver renderizarAcoesItem em
+       js/carrinho.js) — nunca existe uma quantidade "solta" na tela
+       antes do item entrar no carrinho.
+    ============================================================ */
+    .card-acoes {
+      margin-top: 8px;
+    }
+
+    .item-acoes {
+      display: flex;
+      width: 100%;
+    }
+
+    .btn-qtd {
+      width: 26px;
+      height: 26px;
+      background: transparent;
+      color: var(--dourado-claro);
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .btn-qtd:hover { color: var(--branco); }
+
+    .item-acoes--ativo {
+      align-items: center;
+      justify-content: space-between;
+      background: var(--fundo-foto);
+      border: 1px solid var(--borda-sutil);
+      border-radius: 8px;
+      padding: 0 2px;
+    }
+
+    .item-acoes--ativo .qtd-valor {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--claro);
+    }
+
+    .botao-add {
+      flex: 1;
+      background: var(--vinho);
+      color: var(--claro);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .botao-add:hover { background: var(--vinho-claro); }
+    .botao-add:active { transform: scale(0.97); }
+
+    /* ============================================================
+       BOTÃO FLUTUANTE DO CARRINHO
+    ============================================================ */
+    .botao-carrinho-flutuante {
+      position: fixed;
+      bottom: 20px;
+      right: 18px;
+      z-index: 200;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--vinho);
+      color: var(--claro);
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+      border: 2px solid var(--dourado);
+    }
+
+    .badge-carrinho {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 4px;
+      border-radius: 10px;
+      background: var(--dourado);
+      color: #1a1010;
+      font-size: 11px;
+      font-weight: 800;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--fundo);
+    }
+
+    /* ============================================================
+       DRAWER DO CARRINHO
+    ============================================================ */
+    .overlay-carrinho,
+    .overlay-formulario {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .overlay-carrinho.visivel,
+    .overlay-formulario.visivel {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-carrinho {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(380px, 100%);
+      background: var(--fundo-card);
+      z-index: 310;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      box-shadow: -8px 0 24px rgba(0,0,0,0.4);
+    }
+
+    .drawer-carrinho.aberto { transform: translateX(0); }
+
+    .drawer-header {
+      background: linear-gradient(135deg, var(--vinho-escuro) 0%, var(--vinho) 100%);
+      color: var(--branco);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-header h2 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .botao-fechar {
+      background: rgba(255,255,255,0.12);
+      color: var(--branco);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drawer-itens {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+    }
+
+    .drawer-vazio {
+      text-align: center;
+      color: var(--cinza);
+      font-size: 13px;
+      margin-top: 40px;
+      line-height: 1.6;
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--borda-sutil);
+    }
+
+    .drawer-item-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--fundo-foto);
+    }
+
+    .drawer-item-img--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      opacity: 0.5;
+    }
+
+    .drawer-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .drawer-item-nome {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--claro);
+      margin-bottom: 6px;
+    }
+
+    .drawer-item-controles {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      background: var(--fundo-foto);
+      border: 1px solid var(--borda-sutil);
+      border-radius: 8px;
+    }
+
+    .btn-qtd--mini {
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+    }
+
+    .drawer-item-controles .qtd-valor {
+      min-width: 20px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--claro);
+    }
+
+    .drawer-item-precos {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-remover {
+      background: transparent;
+      font-size: 13px;
+      opacity: 0.7;
+      padding: 2px;
+    }
+
+    .btn-remover:hover { opacity: 1; }
+
+    .drawer-item-unitario {
+      font-size: 10.5px;
+      color: var(--cinza);
+    }
+
+    .drawer-item-subtotal {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--dourado-claro);
+    }
+
+    .drawer-footer {
+      padding: 16px 18px;
+      border-top: 1px solid var(--borda-sutil);
+      background: #1c1513;
+    }
+
+    .drawer-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--claro);
+      margin-bottom: 12px;
+    }
+
+    .drawer-total span:last-child {
+      color: var(--dourado-claro);
+      font-size: 19px;
+    }
+
+    .botao-finalizar {
+      width: 100%;
+      background: var(--vinho);
+      color: var(--claro);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      padding: 13px;
+      border-radius: 10px;
+      transition: background 0.15s;
+    }
+
+    .botao-finalizar:hover:not(:disabled) { background: var(--vinho-claro); }
+
+    .botao-finalizar:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .link-continuar {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: transparent;
+      color: var(--cinza);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 10px;
+      padding: 4px;
+    }
+
+    .link-continuar:hover { color: var(--dourado-claro); }
+
+    /* ============================================================
+       FORMULÁRIO DE FINALIZAÇÃO DE PEDIDO
+    ============================================================ */
+    .modal-formulario {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -48%) scale(0.96);
+      width: min(420px, 92vw);
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--fundo-card);
+      border-radius: var(--radius);
+      z-index: 320;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .modal-formulario.aberto {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--vinho-escuro) 0%, var(--vinho) 100%);
+      color: var(--branco);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .modal-header h2 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .modal-subtitulo {
+      font-size: 12px;
+      color: var(--cinza);
+      padding: 12px 18px 0;
+    }
+
+    #form-pedido {
+      padding: 14px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #form-pedido label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cinza);
+    }
+
+    #form-pedido input {
+      background: var(--fundo-foto);
+      border: 1px solid var(--borda-sutil);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--claro);
+      font-family: var(--font-body);
+    }
+
+    #form-pedido input:focus {
+      outline: none;
+      border-color: var(--dourado);
+    }
+
+    #form-pedido .botao-finalizar { margin-top: 4px; }

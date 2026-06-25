@@ -1,7 +1,3 @@
-function formatarPreco(valor) {
-  return 'R$ ' + valor.toFixed(2).replace('.', ',');
-}
-
 function renderizarFoto(item, icone) {
   if (item.imagem) {
     return `<img src="${item.imagem}" alt="${item.nome}" class="foto-img">`;
@@ -18,6 +14,55 @@ function classeCardFoto(item) {
   return item.imagem ? 'card-foto card-foto--img' : 'card-foto card-foto--placeholder';
 }
 
+function renderizarGradeCards(categoria) {
+  return `
+    <div class="grid-cards">
+      ${categoria.itens.map((item, idx) => {
+        const id = `${categoria.id}__${idx}`;
+        return `
+          <div class="card">
+            <div class="${classeCardFoto(item)}">${renderizarFoto(item, categoria.icone)}</div>
+            <div class="card-body">
+              <div class="card-nome">${item.nome}</div>
+              ${item.desc ? `<div class="card-desc">${item.desc}</div>` : ''}
+              <div class="card-preco">${formatarPreco(item.preco)}</div>
+              <div class="card-acoes">${renderizarAcoesItem(id)}</div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderizarBannerLista(categoria) {
+  return `
+    <div class="banner-categoria">
+      <div class="banner-categoria-texto">
+        <span class="banner-categoria-legenda">${categoria.bannerLegenda || categoria.titulo}</span>
+      </div>
+      <div class="banner-categoria-img-wrap">
+        <img src="${categoria.banner}" alt="${categoria.titulo}" class="banner-categoria-img">
+      </div>
+    </div>
+    <div class="lista-itens">
+      ${categoria.itens.map((item, idx) => {
+        const id = `${categoria.id}__${idx}`;
+        return `
+        <div class="item-linha">
+          <div class="item-linha-info">
+            <div class="item-linha-nome">${item.nome}</div>
+            ${item.desc ? `<div class="item-linha-desc">${item.desc}</div>` : ''}
+            <div class="item-linha-preco">${formatarPreco(item.preco)}</div>
+          </div>
+          ${renderizarAcoesItem(id)}
+        </div>
+      `;
+      }).join('')}
+    </div>
+  `;
+}
+
 function renderizarCardapio() {
   const main = document.getElementById('cardapio-main');
   const html = cardapio.map(categoria => `
@@ -27,18 +72,7 @@ function renderizarCardapio() {
         <h2>${categoria.titulo}</h2>
       </div>
       ${categoria.observacao ? `<p class="categoria-obs">${categoria.observacao}</p>` : ''}
-      <div class="grid-cards">
-        ${categoria.itens.map(item => `
-          <div class="card">
-            <div class="${classeCardFoto(item)}">${renderizarFoto(item, categoria.icone)}</div>
-            <div class="card-body">
-              <div class="card-nome">${item.nome}</div>
-              ${item.desc ? `<div class="card-desc">${item.desc}</div>` : ''}
-              <div class="card-preco">${formatarPreco(item.preco)}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
+      ${categoria.banner ? renderizarBannerLista(categoria) : renderizarGradeCards(categoria)}
     </section>
   `).join('');
   main.innerHTML = html;

@@ -7,6 +7,8 @@
 const cardapio = [
   {
     id: 'shawarmas', titulo: 'Shawarmas', icone: '🥙',
+    banner: 'imagens/shawarmas/shawarma misto.png',
+    bannerLegenda: 'Shawarma Tradicional — sabor autêntico do Líbano',
     itens: [
       { nome: 'Frango', preco: 22, desc: 'Batata frita, picles e pasta de alho.', imagem: 'imagens/shawarmas/shawarma de frango.png' },
       { nome: 'Carne', preco: 24, desc: 'Salsinha, cebolinha, tomate, picles, molho tahine.', imagem: 'imagens/shawarmas/shawarma de carne.png' },
@@ -29,6 +31,8 @@ const cardapio = [
   {
     id: 'burgers', titulo: 'Burgers', icone: '🍔',
     observacao: 'Todos os lanches acompanham pasta de alho.',
+    banner: 'imagens/burguer/Lebanese Burguer.png',
+    bannerLegenda: 'Burgers Artesanais da Casa',
     itens: [
       { nome: 'Lebanese Burger', preco: 25, desc: 'Salada de repolho, batata frita, ketchup.', imagem: 'imagens/burguer/Lebanese Burguer.png' },
       { nome: 'Kafta Burger', preco: 25, desc: 'Salada de repolho, batata frita, ketchup.', imagem: 'imagens/burguer/Kafta Burger.png' },
@@ -47,6 +51,7 @@ const cardapio = [
   },
   {
     id: 'pratos', titulo: 'Pratos', icone: '🍛',
+    banner: 'imagens/pratos/Tawook.png',
     itens: [
       { nome: 'Carne', preco: 35, desc: 'Batata frita, salsinha, cebolinha, tomate, picles, molho tahine.', imagem: 'imagens/pratos/carne.png' },
       { nome: 'Frango', preco: 35, desc: 'Batata frita, picles e pasta de alho.', imagem: 'imagens/pratos/frango.png' },
@@ -76,6 +81,7 @@ const cardapio = [
   },
   {
     id: 'esfihas', titulo: 'Esfihas e Salgados', icone: '🫓',
+    banner: 'imagens/esfihas-salgados/esfiha de carne.png',
     itens: [
       { nome: 'Carne', preco: 5, desc: 'Esfiha/salgado de carne.', imagem: 'imagens/esfihas-salgados/esfiha de carne.png' },
       { nome: 'Zaatar', preco: 5, desc: 'Esfiha de zaatar.', imagem: 'imagens/esfihas-salgados/Esfiha de zaatar.png' },
