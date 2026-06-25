@@ -102,9 +102,9 @@ const cardapio = [
       { nome: 'Água sem gás', preco: 5, desc: 'Consultar marca disponível no dia.', imagem: 'imagens/bebidas/agua.png' },
       { nome: 'Água com gás', preco: 5, desc: 'Consultar marca disponível no dia.', imagem: 'imagens/bebidas/agua com gas.png' },
       { nome: 'Suco Natural', preco: 12, desc: 'Consultar sabores disponíveis no dia.', imagem: 'imagens/bebidas/suco natural.png' },
-      { nome: 'Refri Lata (350ml)', preco: 8, imagem: 'imagens/bebidas/refri 350ml.png' },
-      { nome: 'Refri 600ml', preco: 12, imagem: 'imagens/bebidas/refri 600ml.png' },
-      { nome: 'Refri 2L', preco: 20, imagem: 'imagens/bebidas/refri 2l.png' },
+      { nome: 'Refri Lata (350ml)', preco: 8, imagem: 'imagens/bebidas/refri 350ml.png', pedeSabor: true },
+      { nome: 'Refri 600ml', preco: 12, imagem: 'imagens/bebidas/refri 600ml.png', pedeSabor: true },
+      { nome: 'Refri 2L', preco: 20, imagem: 'imagens/bebidas/refri 2l.png', pedeSabor: true },
     ]
   },
   {

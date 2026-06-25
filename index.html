@@ -133,6 +133,19 @@
   </div>
 
   <!-- ============================================================
+       POPUP DE ALERTA (ex.: sabor obrigatório não preenchido)
+  ============================================================ -->
+  <div class="overlay-alerta" id="overlay-alerta"></div>
+  <div class="modal-alerta" id="modal-alerta" aria-hidden="true">
+    <p class="modal-alerta-icone">⚠️</p>
+    <p class="modal-alerta-mensagem" id="alerta-mensagem">Favor, preencha o sabor.</p>
+    <div class="modal-alerta-botoes">
+      <button id="alerta-fechar" class="botao-alerta-secundario">Fechar</button>
+      <button id="alerta-ok" class="botao-alerta-primario">OK</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
        JAVASCRIPT
        -----------------------------------------------------------
        PARA EDITAR PRODUTOS: basta alterar o array "cardapio" abaixo
