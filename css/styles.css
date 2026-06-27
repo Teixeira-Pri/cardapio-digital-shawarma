@@ -548,27 +548,26 @@
     }
 
     /* ============================================================
-       BANNER-CAPA (Shawarmas)
+       BANNER-CAPA (Shawarmas, Burgers)
        ------------------------------------------------------------
-       Variante para fotos já compostas de forma horizontal, com o
-       produto de um lado e espaço livre do outro (ex.: shawarma à
-       direita, fundo neutro à esquerda). A foto cobre o banner por
-       inteiro — não fica numa área separada — com um degradê escuro
-       da esquerda para a direita garantindo leitura do texto, que
-       fica sobreposto e centralizado verticalmente.
+       Variante para fotos já compostas de forma horizontal — a foto
+       cobre o banner por inteiro (não fica numa área separada), com
+       um degradê escuro da esquerda para a direita garantindo
+       leitura do texto, sobreposto e centralizado verticalmente.
        ------------------------------------------------------------
-       A proporção do contêiner (16/9) é a mesma da foto original.
-       Isso é o que garante ZERO corte: como as proporções coincidem,
-       object-fit:cover preenche o banner por completo sem precisar
-       cortar nada (cover e contain dão o mesmo resultado quando as
-       proporções já são iguais). Por isso a altura aqui é sempre
-       derivada da largura — nunca um valor fixo arbitrário, que
-       forçaria um corte em telas largas (ex.: desktop).
+       A proporção do contêiner é sempre a mesma da foto original
+       (definida inline por categoria — ver bannerCapaAspecto em
+       js/produtos.js, com 16/9 como padrão). Isso é o que garante
+       ZERO corte: como as proporções coincidem, object-fit:cover
+       preenche o banner por completo sem precisar cortar nada (cover
+       e contain dão o mesmo resultado quando as proporções já são
+       iguais). Por isso a largura é sempre 100% — em qualquer tela,
+       incluindo desktop — e a altura é sempre derivada dela; nunca um
+       valor fixo arbitrário, que forçaria um corte em telas largas.
     ============================================================ */
     .banner-categoria-capa {
       position: relative;
       width: 100%;
-      max-width: 760px;
       aspect-ratio: 16 / 9;
       margin: 0 0 18px;
       border-radius: var(--radius);

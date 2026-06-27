@@ -9,6 +9,7 @@ const cardapio = [
     id: 'shawarmas', titulo: 'Shawarmas', icone: '🥙',
     banner: 'imagens/shawarmas/shawarma horizontal.png',
     bannerCapa: true,
+    bannerCapaAspecto: '16 / 9',
     bannerLegenda: 'Escolha seu shawarma favorito',
     permiteRetirarItem: true,
     itens: [
@@ -34,7 +35,9 @@ const cardapio = [
   {
     id: 'burgers', titulo: 'Burgers', icone: '🍔',
     observacao: 'Todos os lanches acompanham pasta de alho.',
-    banner: 'imagens/burguer/Lebanese Burguer.png',
+    banner: 'imagens/burguer/burger horizontal.png',
+    bannerCapa: true,
+    bannerCapaAspecto: '4 / 3',
     bannerLegenda: 'Burgers Artesanais da Casa',
     permiteRetirarItem: true,
     itens: [

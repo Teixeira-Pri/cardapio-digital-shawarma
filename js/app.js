@@ -73,8 +73,9 @@ function renderizarBanner(categoria) {
 // Pensada para fotos já compostas de forma horizontal, com o produto
 // de um lado e espaço livre do outro (ex.: shawarma horizontal.png).
 function renderizarBannerCapa(categoria) {
+  const aspecto = categoria.bannerCapaAspecto || '16 / 9';
   return `
-    <div class="banner-categoria-capa">
+    <div class="banner-categoria-capa" style="aspect-ratio: ${aspecto}">
       <img src="${categoria.banner}" alt="${categoria.titulo}" class="banner-categoria-capa-img">
       <div class="banner-categoria-capa-texto">
         <span class="banner-categoria-legenda">${categoria.bannerLegenda || categoria.titulo}</span>
