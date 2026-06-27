@@ -38,7 +38,7 @@ const cardapio = [
     banner: 'imagens/burguer/burger horizontal.png',
     bannerCapa: true,
     bannerCapaAspecto: '4 / 3',
-    bannerLegenda: 'Burgers Artesanais da Casa',
+    bannerLegenda: 'Burgers da casa, feitos no capricho',
     permiteRetirarItem: true,
     itens: [
       { nome: 'Lebanese Burger', preco: 25, desc: 'Salada de repolho, batata frita, ketchup.', imagem: 'imagens/burguer/Lebanese Burguer.png' },
@@ -62,7 +62,7 @@ const cardapio = [
     banner: 'imagens/pratos/pratos.jpeg',
     bannerCapa: true,
     bannerCapaAspecto: '3 / 2',
-    bannerLegenda: 'Pratos Feitos na Hora',
+    bannerLegenda: 'Comida árabe no prato',
     manterFotosItens: true,
     permiteRetirarItem: true,
     itens: [
