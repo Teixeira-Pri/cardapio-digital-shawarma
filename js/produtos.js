@@ -7,8 +7,9 @@
 const cardapio = [
   {
     id: 'shawarmas', titulo: 'Shawarmas', icone: '🥙',
-    banner: 'imagens/shawarmas/shawarma.jpeg',
-    bannerLegenda: 'Shawarma Tradicional — sabor autêntico do Líbano',
+    banner: 'imagens/shawarmas/shawarma horizontal.png',
+    bannerCapa: true,
+    bannerLegenda: 'Escolha seu shawarma favorito',
     permiteRetirarItem: true,
     itens: [
       { nome: 'Frango', preco: 22, desc: 'Batata frita, picles e pasta de alho.' },

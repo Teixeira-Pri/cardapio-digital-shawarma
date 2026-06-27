@@ -68,13 +68,30 @@ function renderizarBanner(categoria) {
   `;
 }
 
+// Capa de seção: a foto cobre o banner por inteiro (em vez de ficar
+// numa área separada), com o texto sobreposto sobre um degradê escuro.
+// Pensada para fotos já compostas de forma horizontal, com o produto
+// de um lado e espaço livre do outro (ex.: shawarma horizontal.png).
+function renderizarBannerCapa(categoria) {
+  return `
+    <div class="banner-categoria-capa">
+      <img src="${categoria.banner}" alt="${categoria.titulo}" class="banner-categoria-capa-img">
+      <div class="banner-categoria-capa-texto">
+        <span class="banner-categoria-legenda">${categoria.bannerLegenda || categoria.titulo}</span>
+      </div>
+    </div>
+  `;
+}
+
 // Sem banner: grade de cards com foto por item.
 // Com banner: capa no topo + (grade com fotos, se "manterFotosItens", ou
 // lista só com texto, quando os itens não têm foto própria).
 function renderizarCardapio() {
   const main = document.getElementById('cardapio-main');
   const html = cardapio.map(categoria => {
-    const banner = categoria.banner ? renderizarBanner(categoria) : '';
+    const banner = categoria.banner
+      ? (categoria.bannerCapa ? renderizarBannerCapa(categoria) : renderizarBanner(categoria))
+      : '';
     const corpo = (!categoria.banner || categoria.manterFotosItens)
       ? renderizarGradeItens(categoria)
       : renderizarListaItens(categoria);
