@@ -60,6 +60,9 @@ const cardapio = [
   {
     id: 'pratos', titulo: 'Pratos', icone: '🍛',
     banner: 'imagens/pratos/pratos.jpeg',
+    bannerCapa: true,
+    bannerCapaAspecto: '3 / 2',
+    bannerLegenda: 'Pratos Feitos na Hora',
     manterFotosItens: true,
     permiteRetirarItem: true,
     itens: [
@@ -74,6 +77,9 @@ const cardapio = [
   {
     id: 'porcoes', titulo: 'Porções', icone: '🍟',
     banner: 'imagens/porcoes/porcao.jpeg',
+    bannerCapa: true,
+    bannerCapaAspecto: '3 / 2',
+    bannerLegenda: 'Porções para Compartilhar',
     itens: [
       { nome: 'Batata Frita', preco: 15, desc: 'Porção de batata frita.' },
       { nome: 'Homus', preco: 20, desc: 'Porção de homus.' },
