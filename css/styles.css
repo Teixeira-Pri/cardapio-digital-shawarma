@@ -471,7 +471,7 @@
     }
 
     /* ============================================================
-       BANNER DE CATEGORIA (Shawarmas, Burgers, Pratos, Esfihas)
+       BANNER DE CATEGORIA (Shawarmas, Burgers, Pratos, Porções)
        ------------------------------------------------------------
        Uma única foto funciona como capa/banner da seção — não como
        a foto de um item específico. As variações ficam listadas
@@ -818,15 +818,59 @@
       margin-bottom: 6px;
     }
 
-    .drawer-item-sabores {
+    /* ============================================================
+       "RETIRAR ALGUM ITEM?" — pergunta por unidade, nas categorias
+       com permiteRetirarItem (shawarmas, burgers, combos, pratos)
+    ============================================================ */
+    .drawer-item-retiradas {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .retirada-unidade {
       display: flex;
       flex-direction: column;
       gap: 5px;
-      margin-bottom: 6px;
     }
 
-    .drawer-campo-sabor {
-      display: block;
+    .retirada-pergunta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .retirada-pergunta span {
+      font-size: 11px;
+      color: var(--cinza);
+      font-weight: 700;
+    }
+
+    .retirada-opcoes {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-retirada {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      background: var(--fundo-foto);
+      color: var(--cinza);
+      border: 1px solid var(--borda-sutil);
+    }
+
+    .btn-retirada--ativo {
+      background: var(--vinho);
+      color: var(--claro);
+      border-color: var(--vinho);
+    }
+
+    .campo-retirada-obs {
       width: 100%;
       background: var(--fundo-foto);
       border: 1px solid var(--borda-sutil);
@@ -837,12 +881,12 @@
       font-family: var(--font-body);
     }
 
-    .drawer-campo-sabor:focus {
+    .campo-retirada-obs:focus {
       outline: none;
       border-color: var(--dourado);
     }
 
-    .drawer-campo-sabor::placeholder {
+    .campo-retirada-obs::placeholder {
       color: var(--cinza-claro);
     }
 
@@ -1031,101 +1075,3 @@
     }
 
     #form-pedido .botao-finalizar { margin-top: 4px; }
-
-    /* ============================================================
-       POPUP DE ALERTA (ex.: sabor obrigatório não preenchido)
-       ------------------------------------------------------------
-       Clicar no overlay (fora do popup) não fecha — em vez disso o
-       popup "treme" (.tremendo), deixando claro que a única saída é
-       um dos botões dele mesmo (Fechar/OK).
-    ============================================================ */
-    .overlay-alerta {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 330;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-
-    .overlay-alerta.visivel {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-alerta {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.96);
-      width: min(320px, 88vw);
-      background: var(--fundo-card);
-      border: 1px solid var(--dourado);
-      border-radius: var(--radius);
-      z-index: 340;
-      padding: 22px 20px 18px;
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s, transform 0.2s;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
-    }
-
-    .modal-alerta.aberto {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    .modal-alerta-icone {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-
-    .modal-alerta-mensagem {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--claro);
-      line-height: 1.4;
-      margin-bottom: 18px;
-    }
-
-    .modal-alerta-botoes {
-      display: flex;
-      gap: 10px;
-    }
-
-    .modal-alerta-botoes button {
-      flex: 1;
-      padding: 11px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .botao-alerta-secundario {
-      background: transparent;
-      color: var(--cinza);
-      border: 1px solid var(--borda-sutil);
-    }
-
-    .botao-alerta-secundario:hover { color: var(--claro); }
-
-    .botao-alerta-primario {
-      background: var(--vinho);
-      color: var(--claro);
-    }
-
-    .botao-alerta-primario:hover { background: var(--vinho-claro); }
-
-    @keyframes tremerAlerta {
-      10%, 90% { transform: translate(-50%, -50%) translateX(-1px); }
-      20%, 80% { transform: translate(-50%, -50%) translateX(2px); }
-      30%, 50%, 70% { transform: translate(-50%, -50%) translateX(-5px); }
-      40%, 60% { transform: translate(-50%, -50%) translateX(5px); }
-    }
-
-    .modal-alerta.tremendo {
-      animation: tremerAlerta 0.4s ease;
-    }

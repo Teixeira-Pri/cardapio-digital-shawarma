@@ -14,7 +14,7 @@ function classeCardFoto(item) {
   return item.imagem ? 'card-foto card-foto--img' : 'card-foto card-foto--placeholder';
 }
 
-function renderizarGradeCards(categoria) {
+function renderizarGradeItens(categoria) {
   return `
     <div class="grid-cards">
       ${categoria.itens.map((item, idx) => {
@@ -35,16 +35,8 @@ function renderizarGradeCards(categoria) {
   `;
 }
 
-function renderizarBannerLista(categoria) {
+function renderizarListaItens(categoria) {
   return `
-    <div class="banner-categoria">
-      <div class="banner-categoria-texto">
-        <span class="banner-categoria-legenda">${categoria.bannerLegenda || categoria.titulo}</span>
-      </div>
-      <div class="banner-categoria-img-wrap">
-        <img src="${categoria.banner}" alt="${categoria.titulo}" class="banner-categoria-img">
-      </div>
-    </div>
     <div class="lista-itens">
       ${categoria.itens.map((item, idx) => {
         const id = `${categoria.id}__${idx}`;
@@ -63,18 +55,42 @@ function renderizarBannerLista(categoria) {
   `;
 }
 
+function renderizarBanner(categoria) {
+  return `
+    <div class="banner-categoria">
+      <div class="banner-categoria-texto">
+        <span class="banner-categoria-legenda">${categoria.bannerLegenda || categoria.titulo}</span>
+      </div>
+      <div class="banner-categoria-img-wrap">
+        <img src="${categoria.banner}" alt="${categoria.titulo}" class="banner-categoria-img">
+      </div>
+    </div>
+  `;
+}
+
+// Sem banner: grade de cards com foto por item.
+// Com banner: capa no topo + (grade com fotos, se "manterFotosItens", ou
+// lista só com texto, quando os itens não têm foto própria).
 function renderizarCardapio() {
   const main = document.getElementById('cardapio-main');
-  const html = cardapio.map(categoria => `
-    <section class="categoria" id="${categoria.id}">
-      <div class="categoria-titulo">
-        <span class="icone">${categoria.icone}</span>
-        <h2>${categoria.titulo}</h2>
-      </div>
-      ${categoria.observacao ? `<p class="categoria-obs">${categoria.observacao}</p>` : ''}
-      ${categoria.banner ? renderizarBannerLista(categoria) : renderizarGradeCards(categoria)}
-    </section>
-  `).join('');
+  const html = cardapio.map(categoria => {
+    const banner = categoria.banner ? renderizarBanner(categoria) : '';
+    const corpo = (!categoria.banner || categoria.manterFotosItens)
+      ? renderizarGradeItens(categoria)
+      : renderizarListaItens(categoria);
+
+    return `
+      <section class="categoria" id="${categoria.id}">
+        <div class="categoria-titulo">
+          <span class="icone">${categoria.icone}</span>
+          <h2>${categoria.titulo}</h2>
+        </div>
+        ${categoria.observacao ? `<p class="categoria-obs">${categoria.observacao}</p>` : ''}
+        ${banner}
+        ${corpo}
+      </section>
+    `;
+  }).join('');
   main.innerHTML = html;
 }
 

@@ -34,6 +34,16 @@ function buscarItemPorId(id) {
   return categoria ? categoria.itens[Number(idx)] : null;
 }
 
+function buscarCategoriaPorId(id) {
+  const [catId] = id.split('__');
+  return cardapio.find(c => c.id === catId);
+}
+
+function itemPermiteRetirada(id) {
+  const categoria = buscarCategoriaPorId(id);
+  return !!(categoria && categoria.permiteRetirarItem);
+}
+
 function obterQtdNoCarrinho(id) {
   const linha = carrinho.find(c => c.id === id);
   return linha ? linha.qtd : 0;
@@ -57,20 +67,19 @@ function renderizarAcoesItem(id) {
   `;
 }
 
-// Itens com "pedeSabor" guardam um sabor por unidade (item.sabores),
-// já que cada pessoa do pedido pode querer um sabor diferente (ex.:
-// 2 refrigerantes — um Coca, um Guaraná). Sempre que a quantidade
-// muda, o array é redimensionado preservando o que já foi digitado.
-function redimensionarSabores(linha) {
-  if (!linha.pedeSabor) return;
-  while (linha.sabores.length < linha.qtd) linha.sabores.push('');
-  while (linha.sabores.length > linha.qtd) linha.sabores.pop();
+// Itens de categorias com "permiteRetirarItem" guardam uma pergunta
+// "retirar algo?" por unidade (item.retiradas), já que cada unidade do
+// mesmo produto pode ter um pedido diferente (ex.: 2x Shawarma de
+// Carne, um sem picles, outro normal). Sempre que a quantidade muda,
+// o array é redimensionado preservando o que já foi escolhido.
+function redimensionarRetiradas(linha) {
+  if (!linha.permiteRetirada) return;
+  while (linha.retiradas.length < linha.qtd) linha.retiradas.push({ retirar: false, obs: '' });
+  while (linha.retiradas.length > linha.qtd) linha.retiradas.pop();
 }
 
 // Define a quantidade exata de um item no carrinho. 0 (ou menos)
-// remove o item e o devolve ao estado inicial ("Adicionar"). Itens com
-// "pedeSabor" entram com sabor vazio — o cliente digita o sabor
-// depois, direto no drawer do carrinho (ver campo .drawer-campo-sabor).
+// remove o item e o devolve ao estado inicial ("Adicionar").
 function definirQuantidadeItem(id, novaQtd) {
   novaQtd = Math.max(0, arredondar(novaQtd));
 
@@ -80,18 +89,18 @@ function definirQuantidadeItem(id, novaQtd) {
     const linha = carrinho.find(c => c.id === id);
     if (linha) {
       linha.qtd = novaQtd;
-      redimensionarSabores(linha);
+      redimensionarRetiradas(linha);
     } else {
       const item = buscarItemPorId(id);
       if (!item) return;
-      const pedeSabor = !!item.pedeSabor;
+      const permiteRetirada = itemPermiteRetirada(id);
       carrinho.push({
         id,
         nome: item.nome,
         preco: item.preco,
         imagem: item.imagem || null,
-        pedeSabor,
-        sabores: pedeSabor ? Array(novaQtd).fill('') : [],
+        permiteRetirada,
+        retiradas: permiteRetirada ? Array.from({ length: novaQtd }, () => ({ retirar: false, obs: '' })) : [],
         qtd: novaQtd,
       });
     }
@@ -108,7 +117,7 @@ function alterarQuantidadeCarrinho(id, delta) {
   const novaQtd = arredondar(linha.qtd + delta);
   if (novaQtd < 1) return;
   linha.qtd = novaQtd;
-  redimensionarSabores(linha);
+  redimensionarRetiradas(linha);
   atualizarUICarrinho();
 }
 
@@ -132,6 +141,26 @@ function renderizarFotoMini(item) {
   return `<div class="drawer-item-img drawer-item-img--placeholder">🥙</div>`;
 }
 
+function renderizarRetiradasItem(item) {
+  if (!item.permiteRetirada) return '';
+  return `
+    <div class="drawer-item-retiradas">
+      ${item.retiradas.map((retirada, i) => `
+        <div class="retirada-unidade">
+          <div class="retirada-pergunta">
+            <span>${item.retiradas.length > 1 ? `Unidade ${i + 1} — ` : ''}Retirar algum item do pedido?</span>
+            <div class="retirada-opcoes">
+              <button type="button" class="btn-retirada${!retirada.retirar ? ' btn-retirada--ativo' : ''}" data-id="${item.id}" data-indice="${i}" data-valor="nao">Não</button>
+              <button type="button" class="btn-retirada${retirada.retirar ? ' btn-retirada--ativo' : ''}" data-id="${item.id}" data-indice="${i}" data-valor="sim">Sim</button>
+            </div>
+          </div>
+          ${retirada.retirar ? `<input type="text" class="campo-retirada-obs" data-id="${item.id}" data-indice="${i}" value="${retirada.obs}" placeholder="O que deseja retirar? Ex: picles, cebola...">` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 function atualizarUICarrinho() {
   const badge = document.getElementById('badge-carrinho');
   const totalItens = quantidadeTotalCarrinho();
@@ -147,13 +176,7 @@ function atualizarUICarrinho() {
         ${renderizarFotoMini(item)}
         <div class="drawer-item-info">
           <div class="drawer-item-nome">${item.nome}</div>
-          ${item.pedeSabor ? `
-            <div class="drawer-item-sabores">
-              ${item.sabores.map((valor, i) => `
-                <input type="text" class="drawer-campo-sabor" data-id="${item.id}" data-indice="${i}" value="${valor}" placeholder="${item.sabores.length > 1 ? `Sabor ${i + 1}` : 'Digite o sabor desejado'}">
-              `).join('')}
-            </div>
-          ` : ''}
+          ${renderizarRetiradasItem(item)}
           <div class="drawer-item-controles">
             <button class="btn-qtd btn-qtd--mini" data-acao="diminuir" data-id="${item.id}" aria-label="Diminuir quantidade">−</button>
             <span class="qtd-valor">${item.qtd}</span>
@@ -180,26 +203,16 @@ function atualizarUICarrinho() {
   });
 }
 
-// Um sabor por unidade (item.sabores) cobre o caso de um pedido para
-// mais de uma pessoa — ex.: 2 refrigerantes, um Coca e um Guaraná.
-// Na mensagem final, sabores repetidos são somados (2x Coca) em vez
-// de listados unidade por unidade (1x Coca, 1x Coca).
-function formatarSabores(item) {
-  if (!item.pedeSabor || !item.sabores.some(Boolean)) return '';
-  if (item.sabores.length === 1) return ` (sabor: ${item.sabores[0]})`;
-  const contagem = {};
-  item.sabores.forEach(sabor => {
-    const chave = sabor || 'não informado';
-    contagem[chave] = (contagem[chave] || 0) + 1;
-  });
-  const partes = Object.entries(contagem).map(([sabor, qtd]) => `${qtd}x ${sabor}`);
-  return ` (sabores: ${partes.join(', ')})`;
-}
-
-// Bloqueia o avanço para o formulário enquanto houver item com sabor
-// obrigatório e ainda não preenchido.
-function carrinhoTemSaborPendente() {
-  return carrinho.some(item => item.pedeSabor && item.sabores.some(sabor => !sabor));
+// Lista o que cada unidade pediu para retirar (ex.: "sem picles"),
+// já que cada unidade do mesmo produto pode ter um pedido diferente.
+function formatarRetiradas(item) {
+  if (!item.permiteRetirada) return '';
+  const pedidos = item.retiradas
+    .map((retirada, i) => (retirada.retirar && retirada.obs ? { i, obs: retirada.obs } : null))
+    .filter(Boolean);
+  if (!pedidos.length) return '';
+  if (item.retiradas.length === 1) return ` (retirar: ${pedidos[0].obs})`;
+  return ` (retirar — ${pedidos.map(p => `un. ${p.i + 1}: ${p.obs}`).join('; ')})`;
 }
 
 function montarMensagemPedido(dadosCliente) {
@@ -212,7 +225,7 @@ function montarMensagemPedido(dadosCliente) {
   linhas.push('');
   linhas.push('*Pedido:*');
   carrinho.forEach(item => {
-    linhas.push(`• ${item.qtd}x ${item.nome}${formatarSabores(item)} — ${formatarPreco(arredondar(item.preco * item.qtd))}`);
+    linhas.push(`• ${item.qtd}x ${item.nome}${formatarRetiradas(item)} — ${formatarPreco(arredondar(item.preco * item.qtd))}`);
   });
   linhas.push('');
   linhas.push(`*Total: ${formatarPreco(totalCarrinho())}*`);
@@ -272,19 +285,6 @@ function enviarPedidoWhatsApp(dadosCliente) {
   document.getElementById('continuar-escolhendo').addEventListener('click', fecharCarrinho);
   overlayCarrinho.addEventListener('click', fecharCarrinho);
 
-  // Campo "Digite o sabor desejado" (refrigerantes), dentro do drawer:
-  // só letras, igual ao campo de nome do formulário de pedido. Atualiza
-  // o sabor direto no carrinho, sem redesenhar o drawer a cada tecla
-  // (perderia o foco/cursor do campo).
-  document.getElementById('drawer-itens').addEventListener('input', (e) => {
-    if (!e.target.classList.contains('drawer-campo-sabor')) return;
-    e.target.value = e.target.value.replace(/[0-9]/g, '');
-    const linha = carrinho.find(c => c.id === e.target.dataset.id);
-    if (!linha) return;
-    const indice = Number(e.target.dataset.indice);
-    linha.sabores[indice] = e.target.value.trim();
-  });
-
   document.getElementById('drawer-itens').addEventListener('click', (e) => {
     const btnQtd = e.target.closest('.btn-qtd--mini');
     if (btnQtd) {
@@ -295,36 +295,27 @@ function enviarPedidoWhatsApp(dadosCliente) {
     const btnRemover = e.target.closest('.btn-remover');
     if (btnRemover) {
       removerDoCarrinho(btnRemover.dataset.id);
+      return;
+    }
+    const btnRetirada = e.target.closest('.btn-retirada');
+    if (btnRetirada) {
+      const linha = carrinho.find(c => c.id === btnRetirada.dataset.id);
+      if (!linha) return;
+      const indice = Number(btnRetirada.dataset.indice);
+      linha.retiradas[indice].retirar = btnRetirada.dataset.valor === 'sim';
+      atualizarUICarrinho();
     }
   });
 
-  // ---- Popup de alerta (ex.: sabor obrigatório não preenchido) ----
-  const overlayAlerta = document.getElementById('overlay-alerta');
-  const modalAlerta = document.getElementById('modal-alerta');
-
-  function abrirAlerta(mensagem) {
-    document.getElementById('alerta-mensagem').textContent = mensagem;
-    modalAlerta.classList.add('aberto');
-    overlayAlerta.classList.add('visivel');
-    modalAlerta.setAttribute('aria-hidden', 'false');
-  }
-
-  function fecharAlerta() {
-    modalAlerta.classList.remove('aberto', 'tremendo');
-    overlayAlerta.classList.remove('visivel');
-    modalAlerta.setAttribute('aria-hidden', 'true');
-  }
-
-  // Clicar fora do popup não fecha — só "treme" o popup, para deixar
-  // claro que a saída é um dos botões dele mesmo (Fechar/OK).
-  overlayAlerta.addEventListener('click', () => {
-    modalAlerta.classList.remove('tremendo');
-    void modalAlerta.offsetWidth; // força o navegador a recalcular o layout, reiniciando a animação
-    modalAlerta.classList.add('tremendo');
+  // Campo "O que deseja retirar?": atualiza direto no carrinho, sem
+  // redesenhar o drawer a cada tecla (perderia o foco/cursor do campo).
+  document.getElementById('drawer-itens').addEventListener('input', (e) => {
+    if (!e.target.classList.contains('campo-retirada-obs')) return;
+    const linha = carrinho.find(c => c.id === e.target.dataset.id);
+    if (!linha) return;
+    const indice = Number(e.target.dataset.indice);
+    linha.retiradas[indice].obs = e.target.value.trim();
   });
-
-  document.getElementById('alerta-fechar').addEventListener('click', fecharAlerta);
-  document.getElementById('alerta-ok').addEventListener('click', fecharAlerta);
 
   // ---- Formulário de finalização ----
   const overlayFormulario = document.getElementById('overlay-formulario');
@@ -332,10 +323,6 @@ function enviarPedidoWhatsApp(dadosCliente) {
 
   function abrirFormulario() {
     if (carrinho.length === 0) return;
-    if (carrinhoTemSaborPendente()) {
-      abrirAlerta('FAVOR, PREENCHA O SABOR DE TODOS OS ITENS ANTES DE CONTINUAR.');
-      return;
-    }
     modalFormulario.classList.add('aberto');
     overlayFormulario.classList.add('visivel');
     modalFormulario.setAttribute('aria-hidden', 'false');
