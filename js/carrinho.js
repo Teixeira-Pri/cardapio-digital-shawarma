@@ -287,9 +287,10 @@ function montarPedido(dadosCliente, carrinhoAtual) {
   };
 }
 
-// Fluxo principal de finalização. Por enquanto não há backend: o
-// pedido é só montado, validado e exibido no console — é o que
-// permite testar o formato do objeto antes de plugar o Supabase.
+// Fluxo principal de finalização: valida, monta o pedido e envia ao
+// Supabase (tabelas "pedidos" e "itens_pedido"). Em caso de erro, o
+// carrinho não é limpo e o formulário não é fechado — quem chama
+// decide isso a partir do retorno.
 async function finalizarPedido(dadosCliente) {
   if (carrinho.length === 0) {
     console.warn('Pedido não finalizado: carrinho está vazio.');
@@ -302,11 +303,15 @@ async function finalizarPedido(dadosCliente) {
 
   const pedido = montarPedido(dadosCliente, carrinho);
 
-  // TODO: quando o Supabase estiver conectado, troque o console.log
-  // abaixo por uma inserção real, ex.: await supabase.from('pedidos').insert(pedido)
-  console.log('Pedido montado:', pedido);
+  try {
+    await enviarPedidoSupabase(pedido);
+  } catch (erro) {
+    console.error('Erro ao enviar pedido ao Supabase:', erro);
+    exibirMensagemSucesso('Não foi possível enviar o pedido. Chame um atendente.');
+    return false;
+  }
 
-  exibirMensagemSucesso('Pedido gerado com sucesso. Verifique o console.');
+  exibirMensagemSucesso('Pedido enviado com sucesso!');
   return true;
 }
 
