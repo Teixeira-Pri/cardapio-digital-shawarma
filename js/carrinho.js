@@ -307,25 +307,41 @@ async function finalizarPedido(dadosCliente) {
     await enviarPedidoSupabase(pedido);
   } catch (erro) {
     console.error('Erro ao enviar pedido ao Supabase:', erro);
-    exibirMensagemSucesso('Não foi possível enviar o pedido. Chame um atendente.');
+    abrirPopupResultado('erro', 'Não foi possível enviar o pedido', [
+      'Verifique sua conexão ou chame um atendente para finalizar o pedido.',
+    ]);
     return false;
   }
 
-  exibirMensagemSucesso('Pedido enviado com sucesso!');
+  abrirPopupResultado('sucesso', 'Pedido enviado para a cozinha!', [
+    'Recebemos seu pedido com sucesso.',
+    'Aguarde na mesa, nossa equipe já foi notificada.',
+    'Se precisar alterar algo, chame um atendente.',
+  ]);
   return true;
 }
 
-let timeoutToast = null;
+// Popup modal de resultado (sucesso ou erro) ao finalizar o pedido.
+// "paragrafos" é uma lista de textos, cada um renderizado como um
+// parágrafo separado dentro do popup.
+function abrirPopupResultado(tipo, titulo, paragrafos) {
+  const overlay = document.getElementById('overlay-resultado');
+  const modal = document.getElementById('modal-resultado');
 
-function exibirMensagemSucesso(texto) {
-  const toast = document.getElementById('toast-sucesso');
-  toast.textContent = texto;
-  toast.classList.add('visivel');
+  document.getElementById('resultado-icone').textContent = tipo === 'sucesso' ? '✅' : '⚠️';
+  document.getElementById('resultado-titulo').textContent = titulo;
+  document.getElementById('resultado-texto').innerHTML = paragrafos.map(p => `<p>${p}</p>`).join('');
 
-  clearTimeout(timeoutToast);
-  timeoutToast = setTimeout(() => {
-    toast.classList.remove('visivel');
-  }, 3500);
+  modal.classList.toggle('modal-resultado--erro', tipo === 'erro');
+  overlay.classList.add('visivel');
+  modal.classList.add('aberto');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function fecharPopupResultado() {
+  document.getElementById('overlay-resultado').classList.remove('visivel');
+  document.getElementById('modal-resultado').classList.remove('aberto');
+  document.getElementById('modal-resultado').setAttribute('aria-hidden', 'true');
 }
 
 // ============================================================
@@ -427,6 +443,10 @@ function exibirMensagemSucesso(texto) {
   document.getElementById('botao-finalizar').addEventListener('click', abrirFormulario);
   document.getElementById('fechar-formulario').addEventListener('click', fecharFormulario);
   overlayFormulario.addEventListener('click', fecharFormulario);
+
+  // ---- Popup de resultado do pedido (sucesso/erro) ----
+  document.getElementById('fechar-resultado').addEventListener('click', fecharPopupResultado);
+  document.getElementById('overlay-resultado').addEventListener('click', fecharPopupResultado);
 
   // Filtra a digitação em tempo real: nome só aceita texto, celular e
   // mesa só aceitam números (o atributo "pattern" sozinho só validaria

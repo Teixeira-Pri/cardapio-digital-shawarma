@@ -132,10 +132,16 @@
   </div>
 
   <!-- ============================================================
-       MENSAGEM DE SUCESSO TEMPORÁRIA (fluxo de teste local, sem
-       backend conectado ainda — ver finalizarPedido() em carrinho.js)
+       POPUP DE RESULTADO DO PEDIDO (sucesso ou erro ao enviar ao
+       Supabase — ver finalizarPedido() em carrinho.js)
   ============================================================ -->
-  <div class="toast-sucesso" id="toast-sucesso" role="status" aria-live="polite"></div>
+  <div class="overlay-resultado" id="overlay-resultado"></div>
+  <div class="modal-resultado" id="modal-resultado" role="alertdialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-resultado-icone" id="resultado-icone"></div>
+    <h2 class="modal-resultado-titulo" id="resultado-titulo"></h2>
+    <div class="modal-resultado-texto" id="resultado-texto"></div>
+    <button class="botao-finalizar" id="fechar-resultado">Entendi</button>
+  </div>
 
   <!-- ============================================================
        JAVASCRIPT

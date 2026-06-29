@@ -1145,30 +1145,66 @@
     #form-pedido .botao-finalizar { margin-top: 4px; }
 
     /* ============================================================
-       MENSAGEM DE SUCESSO TEMPORÁRIA (toast)
+       POPUP DE RESULTADO DO PEDIDO (sucesso ou erro)
     ============================================================ */
-    .toast-sucesso {
+    .overlay-resultado {
       position: fixed;
-      left: 50%;
-      bottom: 24px;
-      z-index: 350;
-      transform: translate(-50%, 12px);
-      background: var(--vinho);
-      color: var(--claro);
-      border: 1px solid var(--dourado);
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 13px;
-      font-weight: 700;
-      text-align: center;
-      max-width: min(360px, 88vw);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 400;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s, transform 0.25s;
+      transition: opacity 0.2s;
     }
 
-    .toast-sucesso.visivel {
+    .overlay-resultado.visivel {
       opacity: 1;
-      transform: translate(-50%, 0);
+      pointer-events: auto;
     }
+
+    .modal-resultado {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -48%) scale(0.96);
+      width: min(360px, 90vw);
+      background: var(--fundo-card);
+      border-radius: var(--radius);
+      border-top: 4px solid var(--dourado);
+      z-index: 410;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      padding: 26px 22px 22px;
+      text-align: center;
+    }
+
+    .modal-resultado.aberto {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-resultado--erro { border-top-color: var(--vermelho); }
+
+    .modal-resultado-icone { font-size: 34px; margin-bottom: 10px; }
+
+    .modal-resultado-titulo {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--claro);
+      margin-bottom: 10px;
+    }
+
+    .modal-resultado-texto {
+      font-size: 13px;
+      color: var(--cinza);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .modal-resultado-texto p + p { margin-top: 8px; }
+
+    .modal-resultado .botao-finalizar { width: 100%; }
