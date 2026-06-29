@@ -215,6 +215,16 @@ function formatarRetiradas(item) {
   return ` (retirar — ${pedidos.map(p => `un. ${p.i + 1}: ${p.obs}`).join('; ')})`;
 }
 
+// ============================================================
+// BACKUP — envio via WhatsApp (fluxo antigo, fora de uso)
+// ------------------------------------------------------------
+// Substituído por finalizarPedido()/montarPedido() abaixo, que por
+// enquanto só montam o objeto do pedido e mostram no console (sem
+// backend conectado ainda). Mantido aqui sem ser chamado em nenhum
+// lugar — se for preciso voltar a enviar por WhatsApp, é só religar
+// a chamada de enviarPedidoWhatsApp(dadosCliente) no submit do
+// formulário, mais abaixo.
+// ============================================================
 function montarMensagemPedido(dadosCliente) {
   const linhas = [];
   linhas.push('🥙 *Novo pedido — Shawarma Beirut Halal*');
@@ -236,6 +246,81 @@ function enviarPedidoWhatsApp(dadosCliente) {
   const mensagem = montarMensagemPedido(dadosCliente);
   const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
   window.open(url, '_blank', 'noopener');
+}
+// ============================================================
+// FIM DO BACKUP
+// ============================================================
+
+// Mesma ideia de formatarRetiradas(), mas devolvendo só o texto da
+// observação do item (sem o " (retirar — ...)" usado na mensagem do
+// WhatsApp) — é o formato que entra no objeto do pedido.
+function obterObservacaoItem(item) {
+  if (!item.permiteRetirada) return '';
+  const pedidos = item.retiradas
+    .map((retirada, i) => (retirada.retirar && retirada.obs ? { i, obs: retirada.obs } : null))
+    .filter(Boolean);
+  if (!pedidos.length) return '';
+  if (item.retiradas.length === 1) return pedidos[0].obs;
+  return pedidos.map(p => `Un.${p.i + 1}: ${p.obs}`).join('; ');
+}
+
+// Monta o objeto estruturado do pedido a partir dos dados do
+// formulário e do carrinho — é o formato que, mais adiante, vai ser
+// inserido no Supabase (por enquanto só serve pra inspeção local).
+function montarPedido(dadosCliente, carrinhoAtual) {
+  return {
+    nome_cliente: dadosCliente.nome,
+    mesa: dadosCliente.mesa,
+    celular: dadosCliente.telefone || '',
+    observacao: '',
+    total: arredondar(carrinhoAtual.reduce((soma, item) => soma + item.preco * item.qtd, 0)),
+    itens: carrinhoAtual.map(item => {
+      const categoria = buscarCategoriaPorId(item.id);
+      return {
+        produto_nome: item.nome,
+        categoria: categoria ? categoria.titulo : '',
+        quantidade: item.qtd,
+        preco_unitario: item.preco,
+        observacao: obterObservacaoItem(item),
+      };
+    }),
+  };
+}
+
+// Fluxo principal de finalização. Por enquanto não há backend: o
+// pedido é só montado, validado e exibido no console — é o que
+// permite testar o formato do objeto antes de plugar o Supabase.
+async function finalizarPedido(dadosCliente) {
+  if (carrinho.length === 0) {
+    console.warn('Pedido não finalizado: carrinho está vazio.');
+    return false;
+  }
+  if (!dadosCliente.nome || !dadosCliente.mesa) {
+    console.warn('Pedido não finalizado: nome e mesa são obrigatórios.');
+    return false;
+  }
+
+  const pedido = montarPedido(dadosCliente, carrinho);
+
+  // TODO: quando o Supabase estiver conectado, troque o console.log
+  // abaixo por uma inserção real, ex.: await supabase.from('pedidos').insert(pedido)
+  console.log('Pedido montado:', pedido);
+
+  exibirMensagemSucesso('Pedido gerado com sucesso. Verifique o console.');
+  return true;
+}
+
+let timeoutToast = null;
+
+function exibirMensagemSucesso(texto) {
+  const toast = document.getElementById('toast-sucesso');
+  toast.textContent = texto;
+  toast.classList.add('visivel');
+
+  clearTimeout(timeoutToast);
+  timeoutToast = setTimeout(() => {
+    toast.classList.remove('visivel');
+  }, 3500);
 }
 
 // ============================================================
@@ -350,7 +435,7 @@ function enviarPedidoWhatsApp(dadosCliente) {
     });
   });
 
-  document.getElementById('form-pedido').addEventListener('submit', (e) => {
+  document.getElementById('form-pedido').addEventListener('submit', async (e) => {
     e.preventDefault();
     const dadosCliente = {
       nome: document.getElementById('campo-nome').value.trim(),
@@ -358,7 +443,8 @@ function enviarPedidoWhatsApp(dadosCliente) {
       mesa: document.getElementById('campo-mesa').value.trim(),
     };
 
-    enviarPedidoWhatsApp(dadosCliente);
+    const sucesso = await finalizarPedido(dadosCliente);
+    if (!sucesso) return;
 
     carrinho = [];
     atualizarUICarrinho();

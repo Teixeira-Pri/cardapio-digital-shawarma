@@ -1143,3 +1143,32 @@
     }
 
     #form-pedido .botao-finalizar { margin-top: 4px; }
+
+    /* ============================================================
+       MENSAGEM DE SUCESSO TEMPORÁRIA (toast)
+    ============================================================ */
+    .toast-sucesso {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 350;
+      transform: translate(-50%, 12px);
+      background: var(--vinho);
+      color: var(--claro);
+      border: 1px solid var(--dourado);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      max-width: min(360px, 88vw);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .toast-sucesso.visivel {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }

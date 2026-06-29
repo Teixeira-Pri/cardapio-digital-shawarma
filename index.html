@@ -102,7 +102,7 @@
         <span>Total</span>
         <span id="total-carrinho">R$ 0,00</span>
       </div>
-      <button class="botao-finalizar" id="botao-finalizar">📲 Finalizar via WhatsApp</button>
+      <button class="botao-finalizar" id="botao-finalizar">🧾 Finalizar Pedido</button>
       <button class="link-continuar" id="continuar-escolhendo">← Continuar escolhendo</button>
     </div>
   </aside>
@@ -116,7 +116,7 @@
       <h2>📋 Finalizar pedido</h2>
       <button class="botao-fechar" id="fechar-formulario" aria-label="Fechar formulário">✕</button>
     </div>
-    <p class="modal-subtitulo">Preencha seus dados e envie o pedido pelo WhatsApp</p>
+    <p class="modal-subtitulo">Preencha seus dados para finalizar o pedido</p>
     <form id="form-pedido">
       <label>Nome completo *
         <input type="text" id="campo-nome" required placeholder="Seu nome" pattern="[^0-9]*" title="Digite apenas letras">
@@ -127,9 +127,15 @@
       <label>Número da mesa *
         <input type="text" id="campo-mesa" required placeholder="Ex: 5" inputmode="numeric" pattern="[0-9]*" title="Digite apenas números">
       </label>
-      <button type="submit" class="botao-finalizar">📲 Enviar via WhatsApp</button>
+      <button type="submit" class="botao-finalizar">🧾 Confirmar Pedido</button>
     </form>
   </div>
+
+  <!-- ============================================================
+       MENSAGEM DE SUCESSO TEMPORÁRIA (fluxo de teste local, sem
+       backend conectado ainda — ver finalizarPedido() em carrinho.js)
+  ============================================================ -->
+  <div class="toast-sucesso" id="toast-sucesso" role="status" aria-live="polite"></div>
 
   <!-- ============================================================
        JAVASCRIPT
